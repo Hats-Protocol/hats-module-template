@@ -2,25 +2,20 @@
 pragma solidity ^0.8.18;
 
 import { Script, console2 } from "forge-std/Script.sol";
-import { Counter } from "../src/Counter.sol";
-
-interface ImmutableCreate2Factory {
-  function create2(bytes32 salt, bytes calldata initializationCode)
-    external
-    payable
-    returns (address deploymentAddress);
-}
+import { Module } from "../src/Module.sol";
 
 contract Deploy is Script {
-  Counter public counter;
-  bytes32 public SALT = bytes32(abi.encode(0x4a75));
+  Module public implementation;
+  bytes32 public SALT = bytes32(abi.encode("change this to the value of your choice"));
 
   // default values
   bool internal _verbose = true;
+  string internal _version = "0.0.1"; // increment this with each new deployment
 
   /// @dev Override default values, if desired
-  function prepare(bool verbose) public {
+  function prepare(bool verbose, string memory version) public {
     _verbose = verbose;
+    _version = version;
   }
 
   /// @dev Set up the deployer via their private key from the environment
@@ -31,7 +26,7 @@ contract Deploy is Script {
 
   function _log(string memory prefix) internal view {
     if (_verbose) {
-      console2.log(string.concat(prefix, "Counter:"), address(counter));
+      console2.log(string.concat(prefix, "Module:"), address(implementation));
     }
   }
 
@@ -47,7 +42,7 @@ contract Deploy is Script {
      *       never differs regardless of where its being compiled
      *    2. The provided salt, `SALT`
      */
-    counter = new Counter{ salt: SALT}(/* insert constructor args here */);
+    implementation = new Module{ salt: SALT}(_version /* insert constructor args here */);
 
     vm.stopBroadcast();
 
@@ -65,7 +60,7 @@ contract DeployPrecompiled is Deploy {
     bytes memory args = abi.encode( /* insert constructor args here */ );
 
     /// @dev Load and deploy pre-compiled ir-optimized bytecode.
-    counter = Counter(deployCode("optimized-out/Counter.sol/Counter.json", args));
+    implementation = Module(deployCode("optimized-out/Module.sol/Module.json", args));
 
     vm.stopBroadcast();
 
