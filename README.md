@@ -23,4 +23,3 @@ First, we compile the target contract(s) via IR by running`FOUNDRY_PROFILE=optim
 Next, ensure that tests are using the `DeployOptimized` script, and run `forge test` as normal.
 
 See the wonderful [Seaport repo](https://github.com/ProjectOpenSea/seaport/blob/main/README.md#foundry-tests) for more details and options for this approach.
-
