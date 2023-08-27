@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 import { Test, console2 } from "forge-std/Test.sol";
 import { Module } from "../src/Module.sol";
@@ -58,6 +58,16 @@ contract WithInstanceTest is ModuleTest {
 }
 
 contract Deployment is WithInstanceTest {
+  /// @dev ensure that both the implementation and instance are properly initialized
+  function test_initialization() public {
+    // implementation
+    vm.expectRevert("Initializable: contract is already initialized");
+    implementation.setUp("setUp attempt");
+    // instance
+    vm.expectRevert("Initializable: contract is already initialized");
+    instance.setUp("setUp attempt");
+  }
+
   function test_version() public {
     assertEq(instance.version(), MODULE_VERSION);
   }

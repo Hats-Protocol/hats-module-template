@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { HatsModule } from "hats-module/HatsModule.sol";
@@ -56,16 +56,16 @@ contract Module is HatsModule {
   constructor(string memory _version) HatsModule(_version) { }
 
   /*//////////////////////////////////////////////////////////////
-                            CONSTRUCTOR
+                            INITIALIZOR
   //////////////////////////////////////////////////////////////*/
 
   /// @inheritdoc HatsModule
-  function setUp(bytes calldata _initData) public override initializer {
+  function _setUp(bytes calldata _initData) internal override {
     // decode init data
   }
 
   /*//////////////////////////////////////////////////////////////
-                          PUBLIC FUNCTIONS
+                        PUBLIC FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
   /*//////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ contract Module is HatsModule {
   //////////////////////////////////////////////////////////////*/
 
   /*//////////////////////////////////////////////////////////////
-                          INTERNAL FUNCTIONS
+                        INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
 
   /*//////////////////////////////////////////////////////////////
