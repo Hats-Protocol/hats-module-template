@@ -3,26 +3,24 @@ pragma solidity ^0.8.19;
 
 import { Test, console2 } from "forge-std/Test.sol";
 import { Module } from "../src/Module.sol";
-import { Deploy, DeployPrecompiled } from "../script/Deploy.s.sol";
-import {
-  HatsModuleFactory, IHats, deployModuleInstance, deployModuleFactory
-} from "hats-module/utils/DeployFunctions.sol";
+import { DeployImplementation, DeployImplementationPrecompiled, DeployInstance } from "../script/Deploy.s.sol";
+// import {
+//   HatsModuleFactory, IHats, deployModuleInstance, deployModuleFactory
+// } from "hats-module/utils/DeployFunctions.sol";
 import { IHats } from "hats-protocol/Interfaces/IHats.sol";
 
-contract ModuleTest is Deploy, Test {
+contract ModuleTest is DeployImplementation, Test {
   /// @dev Inherit from DeployPrecompiled instead of Deploy if working with pre-compiled contracts
 
-  /// @dev variables inhereted from Deploy script
+  /// @dev variables inhereted from DeployImplementation script
   // Module public implementation;
   // bytes32 public SALT;
 
   uint256 public fork;
-  uint256 public BLOCK_NUMBER = 17_671_864; // deployment block for Hats.sol
+  uint256 public BLOCK_NUMBER = 18_265_600; // after HatsModuleFactory deployment block
   IHats public HATS = IHats(0x3bc1A0Ad72417f2d411118085256fC53CBdDd137); // v1.hatsprotocol.eth
-  HatsModuleFactory public factory;
+  DeployInstance public deployInstance;
   Module public instance;
-  bytes public otherImmutableArgs;
-  bytes public initArgs;
   uint256 public hatId;
 
   string public MODULE_VERSION;
@@ -34,9 +32,6 @@ contract ModuleTest is Deploy, Test {
     // deploy implementation via the script
     prepare(false, MODULE_VERSION);
     run();
-
-    // deploy the hats module factory
-    factory = deployModuleFactory(HATS, SALT, "test factory");
   }
 }
 
@@ -46,14 +41,18 @@ contract WithInstanceTest is ModuleTest {
 
     // set up the hats
 
-    // set up the other immutable args
-    otherImmutableArgs = abi.encodePacked();
+    // set up the other immutable args (if necessary)
 
-    // set up the init args
-    initArgs = abi.encode();
+    // set up the init args (if necessary)
 
-    // deploy an instance of the module
-    instance = Module(deployModuleInstance(factory, address(implementation), hatId, otherImmutableArgs, initArgs));
+    // deploy the DeployInstance script
+    deployInstance = new DeployInstance();
+
+    // prepare the script with the necessary args
+    deployInstance.prepare(false, address(implementation), hatId);
+
+    // run the script to deploy an instance of the module
+    instance = Module(deployInstance.run());
   }
 }
 
