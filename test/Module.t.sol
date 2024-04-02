@@ -24,6 +24,7 @@ contract ModuleTest is Deploy, Test {
   bytes public otherImmutableArgs;
   bytes public initArgs;
   uint256 public hatId;
+  uint256 saltNonce;
 
   string public MODULE_VERSION;
 
@@ -52,8 +53,12 @@ contract WithInstanceTest is ModuleTest {
     // set up the init args
     initArgs = abi.encode();
 
+    // set up the salt nonce
+    saltNonce = 1;
+
     // deploy an instance of the module
-    instance = Module(deployModuleInstance(factory, address(implementation), hatId, otherImmutableArgs, initArgs));
+    instance =
+      Module(deployModuleInstance(factory, address(implementation), hatId, otherImmutableArgs, initArgs, saltNonce));
   }
 }
 
